@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=750,user-scalable=no,target-densitydpi=device-dpi" name="viewport">
+<meta content="yes" name="apple-mobile-web-app-capable">
+<meta content="black" name="apple-mobile-web-app-status-bar-style">
+<!-- Set render engine for 360 browser -->
+<meta name="renderer" content="webkit">
+<!--CSS 文件定义 -->
+<link rel="stylesheet" href="/assest/js/eleme/1.2.0/theme-default/index.css">
+<link rel="stylesheet" href="/pages/css/personalIndex.css">
+<title>个人中心</title>
+</head>
+<body class="body">
+<div id="personalIndex" class="personal-index-class">
+    <div class="menu-bar">
+		<el-tabs type="border-card">
+		<!-- 首页 -->
+		  <el-tab-pane label="首页">
+		  	<div class="div-personal-store-class">
+				<div  style="margin-top: 15px;">
+					<el-input placeholder="请输入内容" v-model="search" > 
+					<el-button  slot="append" @click="searchGoods(search)" style="height:80px;font-size:22px;font-family:'微软雅黑';background-color:#409EFF;color:#ffffff;">搜索</el-button>
+					</el-input>
+				</div>
+			
+				<div class="gap" v-show="Visiable">
+					<el-table :data="goodsInfo"  border style="width: 100%">
+						<el-table-column prop="name" label="商品名" >
+						</el-table-column>
+						<el-table-column prop="img" label="图片">
+						</el-table-column>
+						<el-table-column prop="price" label="单价">
+						</el-table-column>
+						<el-table-column prop="opreation" label="操作" >
+							<template scope="scope">						       
+								<el-button @click="showGoods(scope.$index, scope.row)" type="primary">详情</el-button>  
+						        <el-button @click="buyGoods(scope.$index, scope.row)"  type="primary">购买</el-button>				           
+					     	</template>
+						</el-table-column>
+					</el-table>	
+				</div>
+				
+				<!-- 首页--搜索结果显示 -->
+				<div class="gap"  v-show="searchVisiable">			
+					<el-table :data="goodsInfo2"  border style="width: 100%">
+						<el-table-column prop="name" label="商品名" >
+						</el-table-column>
+						<el-table-column prop="img" label="图片">
+						</el-table-column>
+						<el-table-column prop="price" label="单价">
+						</el-table-column>
+						<el-table-column prop="opreation" label="操作" >
+							<template scope="scope">						       
+								<el-button @click="showGoods(scope.$index, scope.row)"  type="primary">详情</el-button>  
+						        <el-button @click="buyGoods(scope.$index, scope.row)"  type="primary" >购买</el-button>				           
+					     	</template>
+						</el-table-column>
+					</el-table>	
+					<!--首页-- 返回-->
+                   <div class="gap">
+                       <el-button type="primary" class="buttonStyle" @click="backHome">返回</el-button>
+                   </div> 					
+				</div>
+				
+				<!-- 首页--物品详情页 -->
+				<div>
+					 <el-dialog title="物品详情" size="large" v-model="goodsDeatilVisiable" :close-on-click-modal="false">
+					 	<div style="font-size:24px;font-family:'微软雅黑';">
+					    	<el-row>
+	                   	   		<el-col :span="4"><span>商品名称:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{goodsRow.name}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row>
+	                   	   		<el-col :span="3"><span>图片:</span></el-col>
+	                   	   		<el-col :span="21"><span>{{goodsRow.img}}</span></el-col>
+	                   	    </el-row>
+						    <el-row>
+	                   	   		<el-col :span="3"><span>单价:</span></el-col>
+	                   	   		<el-col :span="21"><span>{{goodsRow.price}}</span></el-col>
+	                   	    </el-row>						    
+	                   	    <el-row class="gap">
+	                       		<el-col :span="3"><span>崭新度:</span></el-col>
+	                   	   		<el-col :span="21"><span>{{goodsRow.conditions}}</span></el-col>
+	                   	    </el-row>
+	                   	   	<el-row class="gap">
+	                       		<el-col :span="3"><span>数量:</span></el-col>
+	                   	   		<el-col :span="21"><span>{{goodsRow.number}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap">
+	                       		<el-col :span="4"><span>物品描述:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{goodsRow.introduce}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap">
+	                       		<el-col :span="4"><span>卖家学号:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{goodsRow.stu_id}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap">
+	                       		<el-col :span="5"><span>卖家手机号:</span></el-col>
+	                   	   		<el-col :span="19"><span>{{goodsRow.tel}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap">
+	                       		<el-col :span="5"><span>卖家qq号:</span></el-col>
+	                   	   		<el-col :span="19"><span>{{goodsRow.qq}}</span></el-col>
+	                   	    </el-row>
+						</div>
+						<div slot="footer" class="dialog-footer">
+						   <el-button type="primary" @click="goodsDeatilVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">确 定</el-button>
+						</div>	      
+					  </el-dialog>
+					  <div class="v-modal" v-show="goodsDeatilVisiable" style="z-index: 1999;"></div> 
+				 </div>
+				 <!--首页-- 确认购买页面 -->
+				 <div>
+					 <el-dialog title="确认购买" size="large" v-model="buyVisiable" :close-on-click-modal="false">
+						<div class="div-add-resource-class">
+					         <el-form :model="buyGoodsForm"  action="/buy/goods"  ref="buyGoodsForm" :label-position="labelPosition"  method="POST" label-width="100px">   
+								<el-form-item label="商品编号" prop="id" class="gap"> 
+									<el-input name="id" v-model="buyGoodsForm.id" readonly></el-input>
+								</el-form-item>																
+								<el-form-item label="商品名称" prop="name" class="gap"> 
+									<el-input name="name" v-model="buyGoodsForm.name" readonly></el-input>
+								</el-form-item>								
+								<el-form-item label="单价" prop="price" class="gap"> 
+									<el-input name="price" v-model="buyGoodsForm.price" readonly></el-input>
+								</el-form-item>
+								<el-form-item label="数量" prop="number" class="gap"> 
+									<el-input class="buy1" type="number" min="1" name="number" value="1"></el-input>
+							 	</el-form>
+						</div>
+						<div slot="footer" class="dialog-footer">
+						   <el-button type="primary" @click="buyVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">取消</el-button>
+						   <el-button type="primary" @click="confirmBuyGoods" style="height:50px;font-size:24px;font-family:'微软雅黑';">确认购买</el-button>
+						</div>	      
+					  </el-dialog>
+					  <div class="v-modal" v-show="buyVisiable" style="z-index: 1999;"></div> 
+				 </div>				 
+			</div>		       
+		</el-tab-pane>
+	
+		<!-- 个人中心 --> 
+		<el-tab-pane label="个人中心">
+        	<div class="div-personal-info-class">
+            	<!-- 基本信息 -->
+            	<div v-if="isShowInfoItem">
+				<div class="gap">
+					<el-row> 
+						<el-col :span="4"><span>学号:</span></el-col> 
+						<el-col :span="20"><span>{{baseInfo.id}}</span></el-col> 
+					</el-row>
+					<el-row class="gap"> 
+						<el-col :span="4"><span>电话:</span></el-col> 
+						<el-col :span="20"><span>{{baseInfo.tel}}</span></el-col> 
+					</el-row>
+					<el-row class="gap"> 
+						<el-col :span="4"><span>密码:</span></el-col> 
+						<el-col :span="20"><span>{{baseInfo.pwd}}</span></el-col>
+					</el-row>
+					<el-row class="gap position-end"> 
+						<el-button type="primary" class="edit-btn-style" @click="editPersonalInfoBtn">编辑</el-button>
+					</el-row>
+				</div>
+				<!--个人中心--- 退出  -->
+                <div class="gap">
+                	<el-button type="primary" class="buttonStyle" @click="exitLogin">退&nbsp&nbsp&nbsp&nbsp出</el-button>
+                </div> 
+                </div>
+                
+                <!--个人中心--- 编辑个人信息  -->
+                   <div class="gap" v-if="isShowEditItem">
+				        <el-form :model="userForm"	action="/update/personal/info" :rules="userFormRules" ref="userForm" :label-position="labelPosition"  method="POST" label-width="100px">    
+				            <el-form-item label="学号" prop="userId" class="gap"> 
+								<el-input name="userId" v-model="userForm.userId" readonly></el-input>
+							</el-form-item> 
+							<el-form-item label="手机号" prop="tel" class="gap"> 
+								<el-input name="tel" v-model="userForm.tel" placeholder="请输入手机号"></el-input>
+							</el-form-item>
+							<el-form-item label="QQ号" prop="qq" class="gap"> 
+								<el-input name="qq" v-model="userForm.qq" placeholder="请输入qq号"></el-input>
+							</el-form-item>
+						    <el-form-item label="新密码" prop="password" class="gap"> 
+								<el-input name="password" type="password" v-model="userForm.password" placeholder="请输入新密码"></el-input>
+							</el-form-item>
+							<el-form-item label="确认密码" prop="confirmPwd" class="gap"> 
+								<el-input name="confirmPwd" type="password" v-model="userForm.confirmPwd" placeholder="请再次确认密码"></el-input>
+							</el-form-item>
+							<el-button type="primary" class="editbuttonStyle gap" @click="cancelBtn">取消</el-button>
+							<el-button type="primary" class="editbuttonStyle gap" @click="editUserSaveBtn">保存</el-button>
+						</el-form>
+                   </div>                                 
+               </div> 
+		  </el-tab-pane>
+                          
+    	  <!--我的商品列表Tab页 -->  
+		  <el-tab-pane label="我的商品列表">
+		      <div class="div-personal-store-class">
+		      	 <div class="gap">
+					 <el-table :data="tableData" border style="width: 100%">
+						    <el-table-column prop="name" label="商品名" >
+						    </el-table-column>
+						    <el-table-column prop="img" label="图片">
+						    </el-table-column>
+						    <el-table-column prop="opreation" label="操作" >
+						       <template scope="scope">
+						           <el-button @click="showDetails(scope.$index, scope.row)"  type="primary" round >详情</el-button>
+						           <el-button @click="editGoods(scope.$index, scope.row)"  type="primary" round >编辑</el-button>
+						           <el-button @click="deleteGoods(scope.$index, scope.row)"  type="primary" round >删除</el-button>
+					           </template>
+						    </el-table-column>
+					</el-table>	
+				</div>		
+				<div class="gap">
+                       <el-button type="primary" class="buttonStyle" @click="addGoods">新增物品</el-button>
+                </div> 
+				
+				<!--我的商品列表--- 查看物品详情模态窗口 -->	 
+				<div>
+					 <el-dialog title="物品详情" size="large" v-model="myGoodsDeatilVisiable" :close-on-click-modal="false">
+					    <div style="font-size:24px;font-family:'微软雅黑';">
+					    	<el-row>
+	                   	   		<el-col :span="4"><span>编号：</span></el-col>
+	                   	   		<el-col :span="20"><span>{{tableRow.id}}</span></el-col>
+	                   	    </el-row>
+						    <el-row>
+	                   	   		<el-col :span="4"><span>名称：</span></el-col>
+	                   	   		<el-col :span="20"><span>{{tableRow.name}}</span></el-col>
+	                   	    </el-row>
+						    <el-row>
+	                   	   		<el-col :span="4"><span>图片:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{tableRow.img}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap">
+	                       		<el-col :span="4"><span>价格:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{tableRow.price}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap">
+	                       		<el-col :span="4"><span>崭新度:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{tableRow.condition}}</span></el-col>
+	                   	    </el-row>
+	                   	   	<el-row class="gap">
+	                       		<el-col :span="4"><span>数量:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{tableRow.number}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap">
+	                       		<el-col :span="4"><span>物品描述:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{tableRow.introduce}}</span></el-col>
+	                   	    </el-row>
+						</div>
+						<div slot="footer" class="dialog-footer">
+						   <el-button type="primary" @click="myGoodsDeatilVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">确 定</el-button>
+						</div>	      
+					  </el-dialog>
+					  <div class="v-modal" v-show="myGoodsDeatilVisiable" style="z-index: 1999;"></div> 
+				 </div>
+				 
+				 <!--我的商品列表--- 编辑商品信息窗口 -->				 
+				 <div>
+					 <el-dialog title="编辑商品信息" size="large" v-model="editGoodsVisiable" :close-on-click-modal="false">
+						<div class="div-add-resource-class">
+					         <el-form :model="editGoodsForm"  action="/update/goods" :rules="editGoodsRules" ref="editGoodsForm" :label-position="labelPosition"  method="POST" label-width="100px"> 
+								<el-form-item label="商品编号" prop="id" class="gap"> 
+									<el-input name="id" v-model="editGoodsForm.id" readonly></el-input>
+								</el-form-item>
+								<el-form-item label="物品名称" prop="name" class="gap"> 
+									<el-input name="name" v-model="editGoodsForm.name" ></el-input>
+								</el-form-item> 
+								<el-form-item label="价格" prop="price" class="gap"> 
+									<el-input type="number" name="price" v-model="editGoodsForm.price" ></el-input>
+								</el-form-item>
+								<el-form-item label="崭新度" prop="condition" class="gap"> 
+									<el-input type="number" min="1"  max="10" name="condition" v-model="editGoodsForm.condition" ></el-input>
+								</el-form-item>	
+								<el-form-item label="数量" prop="number" class="gap"> 
+									<el-input type="number" min="1" name="number" v-model="editGoodsForm.number"></el-input>
+								</el-form-item>	
+								<el-form-item label="描述" prop="introduce" class="gap"> 
+									<el-input type="textarea"  name="introduce" v-model="editGoodsForm.introduce"   autosize></el-input>
+								</el-form-item>	
+							 </el-form>
+							 <el-button type="primary" class="buttonStyle gap" @click="updateGoods">保存</el-button>	
+					    </div>
+						<div slot="footer" class="dialog-footer">
+						   <el-button @click="editGoodsVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">取 消</el-button>
+						   <el-button type="primary" @click="editGoodsVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">确 定</el-button>
+						</div>	      
+					  </el-dialog>
+					  <div class="v-modal" v-show="editGoodsVisiable" style="z-index: 1999;"></div> 
+				  </div>
+				  
+				  <!--我的商品列表--- 商品删除确认页 -->     
+				  <div>
+					 <el-dialog title="删除确认" size="large" v-model="deleteGoodsVisiable" :close-on-click-modal="false">
+					    <div  style="font-size:24px;font-family:'微软雅黑';">
+						   <el-row>
+	                   	   		<el-col :span="4"><span>编号：</span></el-col>
+	                   	   		<el-col :span="20"><span>{{tableRow.id}}</span></el-col>
+	                   	    </el-row>
+						    <el-row>
+	                   	   		<el-col :span="4"><span>名称：</span></el-col>
+	                   	   		<el-col :span="20"><span>{{tableRow.name}}</span></el-col>
+	                   	    </el-row>
+						    <el-row>
+	                   	   		<el-col :span="4"><span>图片:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{tableRow.img}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap">
+	                       		<el-col :span="4"><span>价格:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{tableRow.price}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap">
+	                       		<el-col :span="4"><span>崭新度:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{tableRow.condition}}</span></el-col>
+	                   	    </el-row>
+	                   	   	<el-row class="gap">
+	                       		<el-col :span="4"><span>数量:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{tableRow.number}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap">
+	                       		<el-col :span="4"><span>物品描述:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{tableRow.introduce}}</span></el-col>
+	                   	    </el-row>
+						</div>						  
+						<div slot="footer" class="dialog-footer">
+							<el-button @click="deleteGoodsVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">取 消</el-button>	
+						   <el-button type="primary" @click="confirmDeleteGoods(tableRow.id)" style="height:50px;font-size:24px;font-family:'微软雅黑';">确认删除</el-button>
+						</div>	      
+					  </el-dialog>
+					  <div class="v-modal" v-show="deleteGoodsVisiable" style="z-index: 1999;"></div> 
+				 </div>	
+				 
+				 <!--我的商品列表--- 新增物品页 -->     
+				  <div>
+					 <el-dialog title="删除确认" size="large" v-model="addGoodsVisiable" :close-on-click-modal="false">
+		      		 	<div class="div-add-resource-class">
+		         			<el-form :model="addGoodsForm"  action="/save/new/goods" :rules="addGoodsRules" ref="addGoodsForm" :label-position="labelPosition"  method="POST" label-width="100px"> 
+								<el-form-item label="商品名称" prop="name" class="gap"> 
+									<el-input name="name" v-model="addGoodsForm.name" placeholder="请输入商品名称"></el-input>
+								</el-form-item> 
+								<el-form-item label="价格" prop="price" class="gap"> 
+									<el-input type="number"  name="price" v-model="addGoodsForm.price" placeholder="请输入价格"></el-input>
+								</el-form-item>
+								<el-form-item label="崭新度" prop="condition" class="gap"> 
+									<el-input type="number" min="1" max="10" name="condition" v-model="addGoodsForm.condition" placeholder="请输入崭新度"></el-input>
+								</el-form-item>	
+								<el-form-item label="数量" prop="number" class="gap"> 
+									<el-input type="number" min="1" name="number" v-model="addGoodsForm.number" placeholder="请输入数量" value="1"></el-input>
+								</el-form-item>	
+								<el-form-item label="描述" prop="introduce" class="gap"> 
+									<el-input type="textarea" name="introduce" v-model="addGoodsForm.introduce" placeholder="请输入描述内容"  autosize></el-input>
+								</el-form-item>	
+				 			</el-form>
+				 		</div>					  
+						<div slot="footer" class="dialog-footer">
+							<el-button @click="addGoodsVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">取 消</el-button>	
+						   <el-button type="primary" @click="confirmaddGoods" style="height:50px;font-size:24px;font-family:'微软雅黑';">保存</el-button>
+						</div>	      
+					  </el-dialog>
+					  <div class="v-modal" v-show="addGoodsVisiable" style="z-index: 1999;"></div> 
+				 </div>	
+				 		 
+  			</div>
+		  </el-tab-pane>
+
+		  <!--我的订单  -->
+		  <el-tab-pane label="我的订单">
+		      <div class="div-personal-store-class">
+		      	 <div class="gap">
+					 <el-table :data="orderData" border style="width: 100%">
+						    <el-table-column prop="name" label="商品名" >
+						    </el-table-column>
+						    <el-table-column prop="img" label="图片">
+						    </el-table-column>
+						    <el-table-column prop="status" label="状态">
+						    </el-table-column>
+						    <el-table-column prop="opreation" label="操作" >
+						       <template scope="scope">						       
+						           <el-button @click="showOrder(scope.$index, scope.row)"  type="primary">详情</el-button>
+						           <el-button @click="deleteOrder(scope.$index, scope.row)"  type="primary">删除</el-button>				           
+					           	   <el-button @click="confirmOrder(scope.$index, scope.row)"  type="primary">确认收货</el-button>				           				           
+					           </template>
+						    </el-table-column>
+					</el-table>	
+				</div> 
+				
+				<!-- 查看订单详情 --> 
+				<div>
+					 <el-dialog title="订单详情" size="large" v-model="orderDeatilVisiable" :close-on-click-modal="false">
+					    <div  style="font-size:24px;font-family:'微软雅黑';">
+						    <el-row class="gap">
+	                   	   		<el-col :span="4"><span>商品名称:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{orderRow.name}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap">
+	                       		<el-col :span="4"><span>价格:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{orderRow.price}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap">
+	                       		<el-col :span="4"><span>状态:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{orderRow.status}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap" >
+	                       		<el-col :span="4"><span>下单时间:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{orderRow.buy_time}}</span></el-col>
+	                   	    </el-row>
+	               			<el-row class="gap" v-show="receivingVisiable">
+	                       		<el-col :span="4"><span>收货时间:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{orderRow.receiving_time}}</span></el-col>
+	                   	    </el-row>
+						</div>
+						<div slot="footer" class="dialog-footer">
+						   <el-button type="primary" @click="orderDeatilVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">确 定</el-button>
+						</div>	      
+					  </el-dialog>
+					  <div class="v-modal" v-show="orderDeatilVisiable" style="z-index: 1999;"></div> 
+				 </div>
+				<!-- 订单删除确认页 -->     
+				<div>
+					 <el-dialog title="订单删除确认" size="large" v-model="deleteOrderVisiable" :close-on-click-modal="false">
+					    <div  style="font-size:24px;font-family:'微软雅黑';">
+						    <el-row class="gap">
+	                   	   		<el-col :span="4"><span>商品名称:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{orderRow.name}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap">
+	                       		<el-col :span="4"><span>价格:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{orderRow.price}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap">
+	                       		<el-col :span="4"><span>状态:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{orderRow.status}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap">
+	                       		<el-col :span="4"><span>下单时间:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{orderRow.buy_time}}</span></el-col>
+	                   	    </el-row>
+	               			<el-row class="gap">
+	                       		<el-col :span="4"><span>收货时间:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{orderRow.receiving_time}}</span></el-col>
+	                   	    </el-row>
+						</div>
+						<div slot="footer" class="dialog-footer">
+						   <el-button type="primary" @click="deleteOrderVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">取消</el-button>
+						   <el-button type="primary" @click="deleteOrderVisiable=confirmDeleteOrder(orderRow.goods_id)" style="height:50px;font-size:24px;font-family:'微软雅黑';">确认删除</el-button>
+						</div>	      
+					  </el-dialog>
+					  <div class="v-modal" v-show="deleteOrderVisiable" style="z-index: 1999;"></div> 
+				 </div>				
+			</div>	
+		  </el-tab-pane>
+		   
+		</el-tabs>
+	</div>
+</div>
+
+<!-- 先引入 Vue -->
+<script src="/assest/js/vue/v2.2.1/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="/assest/js/eleme/1.2.0/index.js"></script>
+<!-- 引入Jquery -->
+<script src="/assest/js/jquery/v3.1.1/jquery.js"></script>
+<!-- 引入JS共通 -->
+<script src="/common/js/common.js"></script>
+<!-- 引入组件 -->
+<script src="/common/component/i-c-personal-info.js"></script>
+<script>
+var personalIndexModel = {};
+personalIndexModel.data = function(){
+	//个人中心-基本信息tab页
+	//验证两次输入的密码是否一致
+	var VerifyPwd = function(rule,value,callback){
+		if(!personalIndexCls.checkPwd(value)){//验证不成功
+			callback(new Error('两次输入的密码不一致'));
+		}else{
+			callback();
+		}
+	};
+	var telRule = [//手机号规则
+   		{ min: 11, max: 11, message: '请输入11位手机号码', trigger: 'blur' }
+   	];
+	var qqRule=[
+		{ max: 15, message: '请输入qq号', trigger: 'blur' }
+	];
+	var passwordRule = [//密码规则
+		{ min: 6,max: 20, message: '密码至少6位', trigger: 'blur' }
+	];
+	var confirmPwdRule = [//确认密码规则
+   		{ validator: VerifyPwd, trigger: 'blur'},
+   	];
+	//获取首页商品信息
+	var goodsResponse = ajax("/get/allgoods/info",null,null,null,{async:false,type:'GET'});   //获取个人资料信息
+	var goodsInfo = goodsResponse.goodsInfo;
+	//获取用户基本信息
+	var response = ajax("/personal/base/info",null,null,null,{async:false,type:'GET'});   //获取个人资料信息
+	var baseInfo = response.baseInfo;
+	//获取我的商品信息
+	var tableDataResponse = ajax("/get/mygoods",null,null,null,{async:false,type:'GET'});
+	var tableData = tableDataResponse.personalStoreItem;	
+	//获取订单信息
+	var orderDataResponse = ajax("/get/personal/order",null,null,null,{async:false,type:'GET'});
+	var orderData = orderDataResponse.order;
+		
+	//更新商品信息
+	var updateGoodsNameRule = [//商品名称规则
+	    { min:1, max:100, message:'请输入正确的商品名', trigger:'blur' },
+	];
+	var updateGoodsIntroduceRule = [//描述规则
+   	    { min:1, max:100, message:'请输入正确的描述', trigger:'blur' },
+   	];
+		
+	//新增商品
+	var addGoodsNameRule = [//商品名称规则
+		{required:true,trigger:'blur'},
+	    { min:1, max:100, message:'请输入正确的商品名', trigger:'blur' },
+	    
+	];
+	var addGoodsPriceRule = [//价格规则
+		{required:true,trigger:'blur'}, 
+	];
+	var addGoodsNumberRule = [//数量规则
+		{required:true,trigger:'blur'},    
+	];
+	var addGoodsConditionRule = [//崭新度规则
+		{required:true,trigger:'blur'},  
+	];
+	var addGoodsIntroduceRule = [//描述规则
+		{required:true,trigger:'blur'}, 
+   	    { min:1, max:100, message:'请输入正确的描述', trigger:'blur' },
+   	];
+	return{	
+		//首页信息
+		goodsInfo:goodsInfo,//首页商品信息
+		goodsRow:'',
+		search:'',//搜索的内容
+		goodsInfo2:[],//搜索页商品信息
+		
+		Visiable:true,//默认显示首页商品窗口
+		searchVisiable:false,//默认不显示搜索商品结果窗口
+		goodsDeatilVisiable:false,//默认不显示首页商品详情窗口
+		buyVisiable:false,//默认不显示购买窗口
+		
+		
+		//个人中心-基本信息tab页
+		baseInfo:baseInfo,//个人信息
+		isShowInfoItem:true,//默认显示个人信息窗口       
+	    isShowEditItem:false,//默认不显示编辑个人信息窗口
+		
+		//我的商品列表信息
+	    tableData:tableData,//我的商品列表信息
+		tableRow:'',
+
+		myGoodsDeatilVisiable:false,//默认不显示我的商品详情窗口
+		editGoodsVisiable:false,//默认不显示编辑商品窗口
+		deleteGoodsVisiable:false,//默认不显示确认删除物品窗口
+		addGoodsVisiable:false,//默认不显示新增物品窗口
+		
+		//订单信息
+		orderData:orderData,//订单信息
+		orderRow:'',
+
+		orderDeatilVisiable:false,//默认不显示订单详情窗口		
+		deleteOrderVisiable:false,//默认不显示确认删除订单窗口
+		receivingVisiable:true,//默认显示收货时间
+		
+		labelPosition:"top",
+		//购买商品
+		buyGoodsForm : {	
+	        name:'',
+	        price:'',
+	        number:'',
+	        id:'',
+	    },	
+	  	//用户信息
+		userForm : {	
+	        userId:baseInfo.id,
+	        tel:baseInfo.tel,
+	        qq:baseInfo.qq,
+	        password:'',
+	        confirmPwd:'',
+	    },
+	    userFormRules : {
+	    	tel : telRule,
+	    	qq : qqRule,
+	    	password : passwordRule,
+	    	confirmPwd : confirmPwdRule,
+	    },
+	    
+		//编辑我的商品
+		editGoodsForm : {
+			id:'',
+			name:'',
+			price:'',
+			condition:'',
+			number:'',
+			introduce:'',
+		},　
+		editGoodsRules : {
+			name:updateGoodsNameRule,
+			introduce:updateGoodsIntroduceRule,	
+		},
+
+		//新增商品	
+		addGoodsForm : {
+			name:'',
+			price:'',
+			condition:'',
+			number:'',
+			introduce:'',
+		},　
+		addGoodsRules : {
+			name:addGoodsNameRule,
+			price:addGoodsPriceRule,
+			number:addGoodsNumberRule,
+			condition:addGoodsConditionRule,
+			introduce:addGoodsIntroduceRule,			
+		},
+	}
+};
+personalIndexModel.methods = {
+	//首页信息与操作	
+	showGoods:function(index,row){//显示首页商品详情
+		personalIndexCls.goodsRow = row;
+		this.goodsDeatilVisiable = true;
+	},	
+	searchGoods:function(search){//搜索商品
+		if(search!="")
+		{
+			this.Visiable=false;
+			var goodsResponse2 = ajax("/get/allgoods/info2",{search:search},null,null,{async:false,type:'POST'});   //获取查询的物品列表
+			personalIndexCls.goodsInfo2=goodsResponse2.goodsInfo;
+			this.searchVisiable=true;
+		}
+	},
+	backHome:function(){//返回首页
+		this.searchVisiable=false;
+		this.Visiable = true;
+	},		
+	buyGoods:function(index,row){//购买商品
+		personalIndexCls.buyGoodsForm = row;
+		this.buyVisiable = true;
+	},		
+	confirmBuyGoods:function() {//确认购买商品
+		this.buyVisiable=false;
+		this.$refs["buyGoodsForm"].validate((valid) => {
+				if (!valid) {
+		    	    return ;
+		    	}
+		   this.$refs["buyGoodsForm"].$el.submit(); 
+		});
+	}, 	
+
+	//用户基本信息与操作	
+	editPersonalInfoBtn : function() {//点击编辑个人信息按钮:显示编辑个人信息信息项
+		this.isShowInfoItem = false;
+		this.isShowEditItem = true;
+	},
+	cancelBtn : function() {//取消编辑个人信息
+		this.isShowInfoItem = true;
+		this.isShowEditItem = false;
+	},
+    editUserSaveBtn : function() {//保存编辑后的个人信息
+    	//TODO提交表单保存信息，重新加载该页信息项
+    	//用户登录form提交
+		this.$refs["userForm"].validate((valid) => {
+	        if (!valid) {
+	    	    return ;
+	    	}
+	    	this.$refs["userForm"].$el.submit();  
+		});
+    	this.isShowInfoItem = true;
+		this.isShowEditItem = false;
+    },
+	exitLogin : function() {//退出登录
+		redirectURL("/login/index");
+	},
+	checkPwd : function(value) {//验证两次输入的密码是否一致
+		var $this = this;
+		if(value == $this.userForm.password){//验证成功
+			return true;
+		}else{//验证不成功
+			return false;
+		}
+	},
+	
+	//“我的商品”信息与操作
+	showDetails : function(index,row) {//查看“我的商品”详情
+		personalIndexCls.tableRow = row;
+		this.myGoodsDeatilVisiable = true;
+	},
+	editGoods : function(index,row) {//编辑“我的商品”信息
+		personalIndexCls.editGoodsForm = row;
+		this.editGoodsVisiable = true;
+	},
+	updateGoods : function() {//保存新编辑的物品信息
+		this.editGoodsVisiable=false;
+		this.$refs["editGoodsForm"].validate((valid) => {
+	        if (!valid) {
+	    	    return ;
+	    	}
+	    this.$refs["editGoodsForm"].$el.submit(); 
+		});
+	}, 
+	deleteGoods:function(index,row){//删除“我的商品”信息
+		personalIndexCls.tableRow = row;
+		this.deleteGoodsVisiable=true;
+	},
+	confirmDeleteGoods:function(id){//确认删除“我的商品”信息
+		ajax("/delete/goods",{id:id},null,null,{async:false,type:'POST'});   //删除物品
+		
+	},
+	addGoods:function(){//新增“我的商品”信息
+		this.addGoodsVisiable=true;
+	},
+	confirmaddGoods : function() {//确认增加商品
+		this.$refs["addGoodsForm"].validate((valid) => {
+	       if (!valid) {
+	    	    return ;
+	    	}
+	    	this.$refs["addGoodsForm"].$el.submit();  
+		});
+	}, 
+	
+	//订单信息与操作
+	showOrder : function(index,row) {//查看订单详情
+		personalIndexCls.orderRow = row;	
+		if(row.status=="未收货")
+		{	
+			this.receivingVisiable=false;
+		}
+		else if(row.status=="已收货")
+		{
+			this.receivingVisiable=true;
+		}
+		this.orderDeatilVisiable = true;
+	},
+	deleteOrder:function(index,row) {//删除订单
+		personalIndexCls.orderRow = row;
+		if(row.status=="已收货")
+		{	
+			this.deleteOrderVisiable =true;
+		}
+		else
+		{
+			alert("未确认收货，不能删除该订单");	
+		}	
+	},
+	confirmOrder:function(index,row) {//确认收货
+		personalIndexCls.orderRow = row;
+		if(row.status=="已收货")
+		{	
+			alert("已收货");
+		}
+		else
+		{
+			  //修改状态	
+			ajax("/confirm/order",{order_id:row.id},null,null,{async:false,type:'POST'}); 	
+		}	
+	},	
+	confirmDeleteOrder:function(goods_id) {//确认删除订单
+		ajax("/delete/order",{goods_id:goods_id},null,null,{async:false,type:'POST'});	
+	},
+		
+};
+var personalIndexModule = Vue.extend(personalIndexModel);
+var personalIndexCls = new personalIndexModule().$mount('#personalIndex');
+
+</script>
+</body>
+</html>

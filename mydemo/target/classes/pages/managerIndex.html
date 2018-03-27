@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=750,user-scalable=no,target-densitydpi=device-dpi" name="viewport">
+<meta content="yes" name="apple-mobile-web-app-capable">
+<meta content="black" name="apple-mobile-web-app-status-bar-style">
+<!-- Set render engine for 360 browser -->
+<meta name="renderer" content="webkit">
+<!--CSS 文件定义 -->
+<link rel="stylesheet" href="/assest/js/eleme/1.2.0/theme-default/index.css">
+<link rel="stylesheet" href="/pages/css/userIndex.css">
+<title>管理中心</title>
+</head>
+<body class="body">
+<div id="managerIndex" class="personal-index-class">
+    <div class="menu-bar">
+		<el-tabs type="border-card">
+		<!-- 首页 -->
+		  <el-tab-pane label="添加用户">
+		  	<div class="div-personal-store-class">
+				<div  style="margin-top:30px" >
+					<el-input type="text" placeholder="请输入账号" v-model="id"></el-input>
+					<el-button type="primary" class="buttonStyle gap" @click="searchUser(id)">搜索</el-button>
+				</div>
+				
+				<!-- 首页--添加新用户详情页 -->
+				<div>
+					<el-dialog title="账号详情" size="large" v-model="userDeatilVisiable" :close-on-click-modal="false">
+						<div style="font-size:24px;font-family:'微软雅黑';">
+					    	<el-row class="gap">
+	                   	   		<el-col :span="4"><span>账号:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{userInfo.id}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap">
+	                   	   		<el-col :span="4"><span>密码:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{userInfo.pwd}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap">
+	                   	   		<el-col :span="4"><span>状态:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{userInfo.status}}</span></el-col>
+	                   	    </el-row>
+						</div>
+						<div slot="footer" class="dialog-footer">
+						   <el-button type="primary" @click="userDeatilVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">返回</el-button>
+						   <el-button type="primary" @click="userRegister(userInfo.id)" style="height:50px;font-size:24px;font-family:'微软雅黑';" v-show="registerButtonVisiable">确认注册</el-button>
+						   <el-button type="primary" @click="pwdReset(userInfo.id)" style="height:50px;font-size:24px;font-family:'微软雅黑';" v-show="resetButtonVisiable">重置密码</el-button>
+						</div>	      
+					  </el-dialog>
+					  <div class="v-modal" v-show="userDeatilVisiable" style="z-index: 1999;"></div> 
+				</div>	
+				 <!-- 注册信息反馈 -->
+				 <div>
+					<el-dialog title="注册信息反馈" size="large" v-model="newUserVisiable" :close-on-click-modal="false">
+						<div style="font-size:24px;font-family:'微软雅黑';">
+					    	<span>账号&nbsp;&nbsp;<strong><i>{{userInfo.id}}</i></strong>&nbsp;&nbsp;注册成功</span>
+				 		</div>
+				 		<div slot="footer" class="dialog-footer">
+						   <el-button type="primary" @click="newUserVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">确定</el-button>
+						</div>
+				 	</el-dialog>
+					  <div class="v-modal" v-show="newUserVisiable" style="z-index: 1999;"></div> 
+				 </div>	
+				 
+				 <!-- 重置密码信息反馈 -->
+				 <div>
+					<el-dialog title="重置密码信息反馈" size="large" v-model="pwdResetVisiable" :close-on-click-modal="false">
+						<div style="font-size:24px;font-family:'微软雅黑';">
+					    	<span>账号&nbsp;&nbsp;<strong><i>{{userInfo.id}}</i></strong>&nbsp;&nbsp;密码已重置为;&nbsp;<strong><i>{{userInfo.pwd}}</i></strong>&nbsp;</span>
+				 		</div>
+				 		<div slot="footer" class="dialog-footer">
+						   <el-button type="primary" @click="pwdResetVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">确定</el-button>
+						</div>
+				 	</el-dialog>
+					  <div class="v-modal" v-show="pwdResetVisiable" style="z-index: 1999;"></div> 
+				 </div>				 		 
+			</div>		       
+		</el-tab-pane>
+	
+		<!-- 批量删除--> 
+		
+		<el-tab-pane label="批量删除">
+        	<div class="div-personal-info-class">
+            	<div  style="margin-top: 30px" >
+            		<span ><strong>删除包含以下字段的账号</strong></span>
+					<el-input placeholder="请输入合适字段" v-model="id" ></el-input>
+					<el-button type="primary" class="buttonStyle gap" @click="deleteUser(id)">删除</el-button>
+				</div>
+				
+				<!-- 删除账号信息反馈 -->
+				 <div>
+					<el-dialog title="删除账号信息反馈" size="large" v-model="deleteUserVisiable" :close-on-click-modal="false">
+						<div style="font-size:24px;font-family:'微软雅黑';">
+					    	<span>{{message}}</span>
+				 		</div>
+				 		<div slot="footer" class="dialog-footer">
+						   <el-button type="primary" @click="deleteUserVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">确定</el-button>
+						</div>
+				 	</el-dialog>
+					  <div class="v-modal" v-show="deleteUserVisiable" style="z-index: 1999;"></div> 
+				 </div>		                           
+            </div> 
+		  </el-tab-pane>
+		  
+		  <!-- 更多权限 -->
+		  <el-tab-pane label="更多权限">
+        	<div class="div-personal-info-class">
+            	<div>
+					<el-button type="primary" class="buttonStyle gap" @click="showPower()" v-show="powerVisiable">点击查看更多权限</el-button>
+				</div>
+				
+				<!-- 无更多权限 -->
+				<div style="font-size:24px;font-family:'微软雅黑';text-align:center"  V-show="lessVisiable">
+					    <span>对不起，你没有更多权限</span>
+				</div>
+				 		
+				 
+				 <!-- 有更多权限 -->
+				 <div>
+				 	<div v-show="moreVisiable">
+						<el-input type="text" placeholder="请输入账号" v-model="id"></el-input>
+						<el-button type="primary" class="buttonStyle gap" @click="searchManager(id)">编辑</el-button>
+					</div>			 		
+				 </div>	
+				 
+				 <!-- 更多权限--添加 -->	
+				<div>
+					<el-dialog title="账号详情" size="large" v-model="managerDeatilVisiable" :close-on-click-modal="false">
+						<div style="font-size:24px;font-family:'微软雅黑';">
+					    	<el-row class="gap">
+	                   	   		<el-col :span="4"><span>账号:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{managerInfo.id}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap">
+	                   	   		<el-col :span="4"><span>密码:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{managerInfo.pwd}}</span></el-col>
+	                   	    </el-row>
+	                   	    <el-row class="gap">
+	                   	   		<el-col :span="4"><span>状态:</span></el-col>
+	                   	   		<el-col :span="20"><span>{{managerInfo.status}}</span></el-col>
+	                   	    </el-row>
+						</div>
+						<div slot="footer" class="dialog-footer">
+						   <el-button type="primary" @click="managerDeatilVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">返回</el-button>
+						   <el-button type="primary" @click="managerRegister(managerInfo.id)" style="height:50px;font-size:24px;font-family:'微软雅黑';" v-show="managerRegisterButtonVisiable">确认注册</el-button>
+						   <el-button type="primary" @click="managerDelete(managerInfo.id)" style="height:50px;font-size:24px;font-family:'微软雅黑';" v-show="managerDeleteButtonVisiable">删除</el-button>
+						</div>	      
+					  </el-dialog>
+					  <div class="v-modal" v-show="managerDeatilVisiable" style="z-index: 1999;"></div> 
+				</div>	
+				 <!-- 注册信息反馈 -->
+				 <div>
+					<el-dialog title="注册信息反馈" size="large" v-model="newManagerVisiable" :close-on-click-modal="false">
+						<div style="font-size:24px;font-family:'微软雅黑';">
+					    	<span>管理员账号&nbsp;&nbsp;<strong><i>{{managerInfo.id}}</i></strong>&nbsp;&nbsp;注册成功</span>
+				 		</div>
+				 		<div slot="footer" class="dialog-footer">
+						   <el-button type="primary" @click="newManagerVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">确定</el-button>
+						</div>
+				 	</el-dialog>
+					  <div class="v-modal" v-show="newManagerVisiable" style="z-index: 1999;"></div> 
+				 </div>	
+				 
+				 <!-- 删除反馈 -->
+				 <div>
+					<el-dialog title="删除反馈" size="large" v-model="deleteManagerVisiable" :close-on-click-modal="false">
+						<div style="font-size:24px;font-family:'微软雅黑';">
+					    	<span><strong><i>{{message}}</i></strong></span>
+				 		</div>
+				 		<div slot="footer" class="dialog-footer">
+						   <el-button type="primary" @click="deleteManagerVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">确定</el-button>
+						</div>
+				 	</el-dialog>
+					  <div class="v-modal" v-show="deleteManagerVisiable" style="z-index: 1999;"></div> 
+				 </div>			 			 	                           
+            </div> 
+		  </el-tab-pane>
+	  
+		</el-tabs>
+	</div>
+</div>
+
+<!-- 先引入 Vue -->
+<script src="/assest/js/vue/v2.2.1/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="/assest/js/eleme/1.2.0/index.js"></script>
+<!-- 引入Jquery -->
+<script src="/assest/js/jquery/v3.1.1/jquery.js"></script>
+<!-- 引入JS共通 -->
+<script src="/common/js/common.js"></script>
+<!-- 引入组件 -->
+<script src="/common/component/i-c-personal-info.js"></script>
+<script>
+var managerIndexModel = {};
+managerIndexModel.data = function(){
+	
+	return{
+		id:'',
+		message:'',
+		userInfo:[],
+		managerInfo:[],
+		userDeatilVisiable:false,//默认不显示首页商品详情窗口
+		registerButtonVisiable:false,//默认不显示注册按钮
+		resetButtonVisiable:false,//默认不显示重置密码按钮
+		newUserVisiable:false,//默认不显示注册成功窗口
+		pwdResetVisiable:false,//默认不显示重置成功窗口
+		deleteUserVisiable:false,//默认不显示删除成功窗口
+		powerVisiable:true,//默认显示查询按钮
+		moreVisiable:false,//默认不显示更多权限窗口
+		lessVisiable:false,//
+		
+		managerRegisterButtonVisiable:false,
+		managerDeleteButtonVisiable:false,
+		managerDeatilVisiable:false,//默认不显示首页商品详情窗口
+		newManagerVisiable:false,//默认不显示管理账户注册成功窗口
+		deleteManagerVisiable:false,//默认不显示删除窗口
+	
+	}
+};
+managerIndexModel.methods = {	
+	searchUser:function(id){//搜索用户账号信息
+		if(id.length!=10){
+			alert("错误的账号");				
+			return;
+		}
+		else{
+			var userResponse = ajax("/manage/user/info",{id:id},null,null,{async:false,type:'POST'});	
+			managerIndexCls.userInfo=userResponse.userInfo;
+			if(managerIndexCls.userInfo.status=="已注册")//已注册用户显示重置密码按钮
+			{
+				this.registerButtonVisiable=false;	
+				this.resetButtonVisiable=true;
+			}
+			else{//未注册用户显示注册按钮
+				this.registerButtonVisiable=true;
+				this.resetButtonVisiable=false;
+			}
+			this.userDeatilVisiable=true;
+		}
+	},
+	
+	userRegister:function(id){//注册用户账号	
+		ajax("/manage/add/user",{id:id},null,null,{async:false,type:'POST'}); 
+		this.userDeatilVisiable=false;
+		this.newUserVisiable=true;
+	},
+	
+	pwdReset:function(id){//重置用户密码	
+		ajax("/manage/user/pwd",{id:id},null,null,{async:false,type:'POST'}); 
+		this.userDeatilVisiable=false;
+		this.pwdResetVisiable=true;
+	},
+	
+	deleteUser:function(id){//删除用户账号
+		var response=ajax("/manage/delete/user",{id:id},null,null,{async:false,type:'POST'}); 
+		managerIndexCls.message=response.message;
+		this.deleteUserVisiable=true;
+	},
+	showPower:function(id){//查询管理员权限
+		var response=ajax("/manage/power",null,null,null,{async:false,type:'GET'}); 
+		if(response.power=="一般"){
+			this.lessVisiable=true;
+			this.moreVisiable=false;
+			this.powerVisiable=false;
+		}
+		else if(response.power=="最高"){
+			this.lessVisiable=false;
+			this.moreVisiable=true;
+			this.powerVisiable=false;
+		}
+	},	
+	searchManager:function(id){//查询管理员账号
+		if(id.length!=3)
+		{
+			alert("错误的账号");
+			return;
+		}
+		else{
+			var managerResponse = ajax("/manage/manager/info",{id:id},null,null,{async:false,type:'POST'});	
+			managerIndexCls.managerInfo=managerResponse.managerInfo;
+			if(managerIndexCls.managerInfo.status=="已注册")
+			{
+				this.managerRegisterButtonVisiable=false;	
+				this.managerDeleteButtonVisiable=true;
+			}
+			else{//未注册用户显示注册按钮
+				this.managerRegisterButtonVisiable=true;	
+				this.managerDeleteButtonVisiable=false;
+			}
+			this.managerDeatilVisiable=true;
+		}
+	},
+	
+	managerRegister:function(id){//注册管理员账号	
+		ajax("/manage/add/manager",{id:id},null,null,{async:false,type:'POST'}); 
+		this.managerDeatilVisiable=false;
+		this.newManagerVisiable=true;
+	},
+	managerDelete:function(id){//删除管理员账号
+		var response=ajax("/manage/delete/manager",{id:id},null,null,{async:false,type:'POST'}); 
+		managerIndexCls.message=response.message;
+		this.managerDeatilVisiable=false;
+		this.deleteManagerVisiable=true;
+	},
+	
+};
+var managerIndexModule = Vue.extend(managerIndexModel);
+var managerIndexCls = new managerIndexModule().$mount('#managerIndex');
+
+</script>
+</body>
+</html>

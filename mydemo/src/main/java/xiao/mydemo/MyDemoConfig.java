@@ -1,10 +1,9 @@
-/**
- * 2017年4月8日 下午7:48:26
- * wuyp
- */
+
 package xiao.mydemo;
-import xiao.mydemo.ctl.LoginController;
-import xiao.mydemo.ctl.PersonalIndexController;
+import xiao.mydemo.ctl.UserLoginController;
+import xiao.mydemo.ctl.ManagerIndexController;
+import xiao.mydemo.ctl.ManagerLoginController;
+import xiao.mydemo.ctl.UserIndexController;
 
 import com.jfinal.config.Constants;
 import com.jfinal.config.Handlers;
@@ -67,8 +66,10 @@ public class MyDemoConfig extends JFinalConfig {
 
 	@Override
 	public void configRoute(Routes arg0) {
-		arg0.add("/login", LoginController.class);
-		arg0.add("/personal",PersonalIndexController.class);
+		arg0.add("/userlogin", UserLoginController.class);
+		arg0.add("/managerlogin", ManagerLoginController.class);
+		arg0.add("/user",UserIndexController.class);
+		arg0.add("/manager", ManagerIndexController.class);
 	}
 
 }

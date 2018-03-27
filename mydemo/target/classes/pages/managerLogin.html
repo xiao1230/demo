@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=750,user-scalable=no,target-densitydpi=device-dpi" name="viewport">
+<meta content="yes" name="apple-mobile-web-app-capable">
+<meta content="black" name="apple-mobile-web-app-status-bar-style">
+<!-- Set render engine for 360 browser -->
+<meta name="renderer" content="webkit">
+<!--CSS 文件定义 -->
+<link rel="stylesheet" href="/assest/js/eleme/1.2.0/theme-default/index.css">
+<link rel="stylesheet" href="/pages/css/login.css">
+<title>管理员登录</title>
+</head>
+<body>
+<div id="login">
+    <!-- 登录页 -->
+	<div  class="divLoginCls fontStyle topGap" v-if="isshowlogin">
+		<div class="header-class">
+		   <span>川师跳蚤市场</span>
+		</div>
+		<el-form :model="loginForm"	action="/managerlogin/verification" :rules="loginRules" ref="loginForm" :label-position="labelPosition"	method="POST" label-width="100px"> 
+			<el-form-item label="账号" prop="Id" class="gap"> 
+				<el-input name="Id" v-model="loginForm.Id"></el-input>
+			</el-form-item> 
+			<el-form-item label="密码" prop="password" class="gap">
+				<el-input type="password" name="password" v-model="loginForm.password"></el-input>
+			</el-form-item> 
+			<el-button type="primary" class="loginBtnStyle gap" @click="managerLoginSubmit">管理员登录</el-button> 
+		</el-form>	
+	</div>
+</div>
+	
+	
+<!-- 先引入 Vue -->
+<script src="/assest/js/vue/v2.2.1/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="/assest/js/eleme/1.2.0/index.js"></script>
+<!-- 引入Jquery -->
+<script src="/assest/js/jquery/v3.1.1/jquery.js"></script>
+<!-- 引入JS共通 -->
+<script src="/common/js/common.js"></script>
+<script>
+	var LoginModel = {};
+	//数据定义
+	LoginModel.data = function() {
+		var IdRule = [//账号规则
+	   		{ required: true, message: '请输入账号号', trigger: 'blur' },
+	   		{ min: 3, max: 3, message: '请输入3位账号', trigger: 'blur' }
+	   	];
+		var passwordRule = [//密码规则
+			{ required: true, message: '请输入密码', trigger: 'blur' },
+			{ min: 6, max: 20, message: '密码至少6位', trigger: 'blur' }
+		];
+		
+		return {
+			loginForm:{//登录模块
+				Id:'',
+				password:'',
+			},
+		    loginRules:{//登录规则
+		    	Id: IdRule,
+				password: passwordRule,
+			},
+			labelPosition: 'top',
+			isshowlogin:true,               //默认显示登录页
+		}
+	};
+	//方法定义
+	LoginModel.methods = {
+		managerLoginSubmit:function(){
+		    //用户登录form提交
+			 this.$refs["loginForm"].validate((valid) => {
+			        if (!valid) {
+			    	    return ;
+			    	}
+			    	this.$refs["loginForm"].$el.submit();  
+			 });
+		},
+	};
+	//实例化
+	var LoginModule = Vue.extend(LoginModel);
+	var LoginCls = new LoginModule().$mount('#login');
+</script>
+</body>
+</html>

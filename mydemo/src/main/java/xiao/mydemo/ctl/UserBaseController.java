@@ -1,14 +1,11 @@
-/**
- * 2017年5月4日 下午15:40:05
- * wuyp
- */
+
 package xiao.mydemo.ctl;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import com.jfinal.core.Controller;
 
-public class IPersonalStoreBaseController extends Controller{
+public class UserBaseController extends Controller{
 	/**
 	 * 获取当前登录用户方法
 	 */

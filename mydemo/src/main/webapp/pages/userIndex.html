@@ -10,11 +10,11 @@
 <meta name="renderer" content="webkit">
 <!--CSS 文件定义 -->
 <link rel="stylesheet" href="/assest/js/eleme/1.2.0/theme-default/index.css">
-<link rel="stylesheet" href="/pages/css/personalIndex.css">
-<title>个人中心</title>
+<link rel="stylesheet" href="/pages/css/userIndex.css">
+<title>用户中心</title>
 </head>
 <body class="body">
-<div id="personalIndex" class="personal-index-class">
+<div id="userIndex" class="personal-index-class">
     <div class="menu-bar">
 		<el-tabs type="border-card">
 		<!-- 首页 -->
@@ -29,8 +29,6 @@
 				<div class="gap" v-show="Visiable">
 					<el-table :data="goodsInfo"  border style="width: 100%">
 						<el-table-column prop="name" label="商品名" >
-						</el-table-column>
-						<el-table-column prop="img" label="图片">
 						</el-table-column>
 						<el-table-column prop="price" label="单价">
 						</el-table-column>
@@ -47,8 +45,6 @@
 				<div class="gap"  v-show="searchVisiable">			
 					<el-table :data="goodsInfo2"  border style="width: 100%">
 						<el-table-column prop="name" label="商品名" >
-						</el-table-column>
-						<el-table-column prop="img" label="图片">
 						</el-table-column>
 						<el-table-column prop="price" label="单价">
 						</el-table-column>
@@ -72,10 +68,6 @@
 					    	<el-row>
 	                   	   		<el-col :span="4"><span>商品名称:</span></el-col>
 	                   	   		<el-col :span="20"><span>{{goodsRow.name}}</span></el-col>
-	                   	    </el-row>
-	                   	    <el-row>
-	                   	   		<el-col :span="3"><span>图片:</span></el-col>
-	                   	   		<el-col :span="21"><span>{{goodsRow.img}}</span></el-col>
 	                   	    </el-row>
 						    <el-row>
 	                   	   		<el-col :span="3"><span>单价:</span></el-col>
@@ -170,7 +162,7 @@
                 
                 <!--个人中心--- 编辑个人信息  -->
                    <div class="gap" v-if="isShowEditItem">
-				        <el-form :model="userForm"	action="/update/personal/info" :rules="userFormRules" ref="userForm" :label-position="labelPosition"  method="POST" label-width="100px">    
+				        <el-form :model="userForm"	action="/update/user/info" :rules="userFormRules" ref="userForm" :label-position="labelPosition"  method="POST" label-width="100px">    
 				            <el-form-item label="学号" prop="userId" class="gap"> 
 								<el-input name="userId" v-model="userForm.userId" readonly></el-input>
 							</el-form-item> 
@@ -200,8 +192,6 @@
 					 <el-table :data="tableData" border style="width: 100%">
 						    <el-table-column prop="name" label="商品名" >
 						    </el-table-column>
-						    <el-table-column prop="img" label="图片">
-						    </el-table-column>
 						    <el-table-column prop="opreation" label="操作" >
 						       <template scope="scope">
 						           <el-button @click="showDetails(scope.$index, scope.row)"  type="primary" round >详情</el-button>
@@ -227,12 +217,8 @@
 	                   	   		<el-col :span="4"><span>名称：</span></el-col>
 	                   	   		<el-col :span="20"><span>{{tableRow.name}}</span></el-col>
 	                   	    </el-row>
-						    <el-row>
-	                   	   		<el-col :span="4"><span>图片:</span></el-col>
-	                   	   		<el-col :span="20"><span>{{tableRow.img}}</span></el-col>
-	                   	    </el-row>
 	                   	    <el-row class="gap">
-	                       		<el-col :span="4"><span>价格:</span></el-col>
+	                       		<el-col :span="4"><span>单价:</span></el-col>
 	                   	   		<el-col :span="20"><span>{{tableRow.price}}</span></el-col>
 	                   	    </el-row>
 	                   	    <el-row class="gap">
@@ -301,10 +287,6 @@
 	                   	   		<el-col :span="4"><span>名称：</span></el-col>
 	                   	   		<el-col :span="20"><span>{{tableRow.name}}</span></el-col>
 	                   	    </el-row>
-						    <el-row>
-	                   	   		<el-col :span="4"><span>图片:</span></el-col>
-	                   	   		<el-col :span="20"><span>{{tableRow.img}}</span></el-col>
-	                   	    </el-row>
 	                   	    <el-row class="gap">
 	                       		<el-col :span="4"><span>价格:</span></el-col>
 	                   	   		<el-col :span="20"><span>{{tableRow.price}}</span></el-col>
@@ -370,16 +352,12 @@
 					 <el-table :data="orderData" border style="width: 100%">
 						    <el-table-column prop="name" label="商品名" >
 						    </el-table-column>
-						    <el-table-column prop="img" label="图片">
-						    </el-table-column>
 						    <el-table-column prop="status" label="状态">
 						    </el-table-column>
 						    <el-table-column prop="opreation" label="操作" >
 						       <template scope="scope">						       
 						           <el-button @click="showOrder(scope.$index, scope.row)"  type="primary">详情</el-button>
-						           <el-button @click="deleteOrder(scope.$index, scope.row)"  type="primary">删除</el-button>				           
-					           	   <el-button @click="confirmOrder(scope.$index, scope.row)"  type="primary">确认收货</el-button>				           				           
-					           </template>
+						       </template>
 						    </el-table-column>
 					</el-table>	
 				</div> 
@@ -410,7 +388,9 @@
 	                   	    </el-row>
 						</div>
 						<div slot="footer" class="dialog-footer">
-						   <el-button type="primary" @click="orderDeatilVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">确 定</el-button>
+						   <el-button type="primary" @click="orderDeatilVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">返回</el-button>
+						   <el-button @click="deleteOrder(orderRow.status)"  type="primary" V-show="deleteOrderButtonVisiable" style="height:50px;font-size:24px;font-family:'微软雅黑';">删除</el-button>				           
+					       <el-button @click="confirmOrder(orderRow.status)"  type="primary" V-show="confirmOrderButtonVisiable" style="height:50px;font-size:24px;font-family:'微软雅黑';">确认收货</el-button>				           				           
 						</div>	      
 					  </el-dialog>
 					  <div class="v-modal" v-show="orderDeatilVisiable" style="z-index: 1999;"></div> 
@@ -424,7 +404,7 @@
 	                   	   		<el-col :span="20"><span>{{orderRow.name}}</span></el-col>
 	                   	    </el-row>
 	                   	    <el-row class="gap">
-	                       		<el-col :span="4"><span>价格:</span></el-col>
+	                       		<el-col :span="4"><span>单价:</span></el-col>
 	                   	   		<el-col :span="20"><span>{{orderRow.price}}</span></el-col>
 	                   	    </el-row>
 	                   	    <el-row class="gap">
@@ -465,8 +445,8 @@
 <!-- 引入组件 -->
 <script src="/common/component/i-c-personal-info.js"></script>
 <script>
-var personalIndexModel = {};
-personalIndexModel.data = function(){
+var userIndexModel = {};
+userIndexModel.data = function(){
 	//个人中心-基本信息tab页
 	//验证两次输入的密码是否一致
 	var VerifyPwd = function(rule,value,callback){
@@ -492,13 +472,13 @@ personalIndexModel.data = function(){
 	var goodsResponse = ajax("/get/allgoods/info",null,null,null,{async:false,type:'GET'});   //获取个人资料信息
 	var goodsInfo = goodsResponse.goodsInfo;
 	//获取用户基本信息
-	var response = ajax("/personal/base/info",null,null,null,{async:false,type:'GET'});   //获取个人资料信息
+	var response = ajax("/user/base/info",null,null,null,{async:false,type:'GET'});   //获取个人资料信息
 	var baseInfo = response.baseInfo;
 	//获取我的商品信息
 	var tableDataResponse = ajax("/get/mygoods",null,null,null,{async:false,type:'GET'});
 	var tableData = tableDataResponse.personalStoreItem;	
 	//获取订单信息
-	var orderDataResponse = ajax("/get/personal/order",null,null,null,{async:false,type:'GET'});
+	var orderDataResponse = ajax("/get/user/order",null,null,null,{async:false,type:'GET'});
 	var orderData = orderDataResponse.order;
 		
 	//更新商品信息
@@ -559,7 +539,9 @@ personalIndexModel.data = function(){
 		orderData:orderData,//订单信息
 		orderRow:'',
 
-		orderDeatilVisiable:false,//默认不显示订单详情窗口		
+		orderDeatilVisiable:false,//默认不显示订单详情窗口	
+		deleteOrderButtonVisiable:false,
+		confirmOrderButtonVisiable:false,
 		deleteOrderVisiable:false,//默认不显示确认删除订单窗口
 		receivingVisiable:true,//默认显示收货时间
 		
@@ -617,10 +599,10 @@ personalIndexModel.data = function(){
 		},
 	}
 };
-personalIndexModel.methods = {
+userIndexModel.methods = {
 	//首页信息与操作	
 	showGoods:function(index,row){//显示首页商品详情
-		personalIndexCls.goodsRow = row;
+		userIndexCls.goodsRow = row;
 		this.goodsDeatilVisiable = true;
 	},	
 	searchGoods:function(search){//搜索商品
@@ -628,7 +610,7 @@ personalIndexModel.methods = {
 		{
 			this.Visiable=false;
 			var goodsResponse2 = ajax("/get/allgoods/info2",{search:search},null,null,{async:false,type:'POST'});   //获取查询的物品列表
-			personalIndexCls.goodsInfo2=goodsResponse2.goodsInfo;
+			userIndexCls.goodsInfo2=goodsResponse2.goodsInfo;
 			this.searchVisiable=true;
 		}
 	},
@@ -637,7 +619,7 @@ personalIndexModel.methods = {
 		this.Visiable = true;
 	},		
 	buyGoods:function(index,row){//购买商品
-		personalIndexCls.buyGoodsForm = row;
+		userIndexCls.buyGoodsForm = row;
 		this.buyVisiable = true;
 	},		
 	confirmBuyGoods:function() {//确认购买商品
@@ -672,7 +654,7 @@ personalIndexModel.methods = {
 		this.isShowEditItem = false;
     },
 	exitLogin : function() {//退出登录
-		redirectURL("/login/index");
+		redirectURL("/userlogin/index");
 	},
 	checkPwd : function(value) {//验证两次输入的密码是否一致
 		var $this = this;
@@ -685,11 +667,11 @@ personalIndexModel.methods = {
 	
 	//“我的商品”信息与操作
 	showDetails : function(index,row) {//查看“我的商品”详情
-		personalIndexCls.tableRow = row;
+		userIndexCls.tableRow = row;
 		this.myGoodsDeatilVisiable = true;
 	},
 	editGoods : function(index,row) {//编辑“我的商品”信息
-		personalIndexCls.editGoodsForm = row;
+		userIndexCls.editGoodsForm = row;
 		this.editGoodsVisiable = true;
 	},
 	updateGoods : function() {//保存新编辑的物品信息
@@ -702,7 +684,7 @@ personalIndexModel.methods = {
 		});
 	}, 
 	deleteGoods:function(index,row){//删除“我的商品”信息
-		personalIndexCls.tableRow = row;
+		userIndexCls.tableRow = row;
 		this.deleteGoodsVisiable=true;
 	},
 	confirmDeleteGoods:function(id){//确认删除“我的商品”信息
@@ -723,47 +705,37 @@ personalIndexModel.methods = {
 	
 	//订单信息与操作
 	showOrder : function(index,row) {//查看订单详情
-		personalIndexCls.orderRow = row;	
+		userIndexCls.orderRow = row;	
 		if(row.status=="未收货")
 		{	
 			this.receivingVisiable=false;
+			this.deleteOrderButtonVisiable=false;
+			this.confirmOrderButtonVisiable=true;
 		}
 		else if(row.status=="已收货")
 		{
 			this.receivingVisiable=true;
+			this.deleteOrderButtonVisiable=true;
+			this.confirmOrderButtonVisiable=false;
 		}
 		this.orderDeatilVisiable = true;
 	},
 	deleteOrder:function(index,row) {//删除订单
-		personalIndexCls.orderRow = row;
-		if(row.status=="已收货")
-		{	
-			this.deleteOrderVisiable =true;
-		}
-		else
-		{
-			alert("未确认收货，不能删除该订单");	
-		}	
+		userIndexCls.orderRow = row;
+		this.deleteOrderVisiable =true;
 	},
 	confirmOrder:function(index,row) {//确认收货
-		personalIndexCls.orderRow = row;
-		if(row.status=="已收货")
-		{	
-			alert("已收货");
-		}
-		else
-		{
-			  //修改状态	
-			ajax("/confirm/order",{order_id:row.id},null,null,{async:false,type:'POST'}); 	
-		}	
+		userIndexCls.orderRow = row;
+		//修改状态	
+		ajax("/confirm/order",{order_id:row.id},null,null,{async:false,type:'POST'}); 		  
 	},	
 	confirmDeleteOrder:function(goods_id) {//确认删除订单
 		ajax("/delete/order",{goods_id:goods_id},null,null,{async:false,type:'POST'});	
 	},
 		
 };
-var personalIndexModule = Vue.extend(personalIndexModel);
-var personalIndexCls = new personalIndexModule().$mount('#personalIndex');
+var userIndexModule = Vue.extend(userIndexModel);
+var userIndexCls = new userIndexModule().$mount('#userIndex');
 
 </script>
 </body>

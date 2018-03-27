@@ -1,7 +1,4 @@
-/**
- * 2017年5月2日 下午3:40:05
- * wuyp
- */
+
 package xiao.mydemo.ctl;
 
 import java.util.List;
@@ -13,20 +10,20 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 
-public class PersonalIndexController extends Controller{
-	@ActionKey(value = "/personal/index")
-	public void personalIndex() {	
-		this.render("/pages/personalIndex.html");
+public class UserIndexController extends Controller{
+	@ActionKey(value = "/user/index")
+	public void userIndex() {	
+		this.render("/pages/userIndex.html");
 	}
 
 	/**
 	 * 个人中心--获取用户基本信息
 	 */
-	@ActionKey(value = "/personal/base/info")
+	@ActionKey(value = "/user/base/info")
 	public void list() {
 		String userId = this.getSessionAttr("userId");
 		try{
-			String sql = String.format(" select * from user where id = ? and status = 1 ");
+			String sql = String.format(" select * from user where id = ? ");
 			Record record=Db.findFirst(sql,userId);
 			this.renderJson("baseInfo", record);
 		}catch(Exception ex){
@@ -38,7 +35,7 @@ public class PersonalIndexController extends Controller{
 	 * 个人中心--更新编辑后的用户信息
 	 */
 	@Before(Tx.class)
-	@ActionKey(value = "/update/personal/info" )
+	@ActionKey(value = "/update/user/info" )
 	public void savePersonalInfo() {
 		String userId = this.getSessionAttr("userId");
 		try{
@@ -51,7 +48,7 @@ public class PersonalIndexController extends Controller{
 				record.set("pwd", this.getPara("password"));
 			}
 			Db.update("user", record);
-			this.redirect("/personal/index");
+			this.redirect("/user/index");
 		}catch(Exception ex){//保存失败
 			this.renderError(-1, "更新用户信息失败");
 		};
@@ -89,7 +86,6 @@ public class PersonalIndexController extends Controller{
 		try{
 			String sql = String.format(" select goods.stu_id as stu_id,goods.id as id,goods.name as name,goods.price as price,goods.number as number,goods.condition as conditions,goods.introduce as introduce,user.tel as tel,user.qq as qq from goods,user where goods.number>0 and user.id=goods.stu_id and user.id<>? and goods.name like ?");
 			List<Record> record=Db.find(sql,userId,"%"+search+"%");			
-			//System.out.println("record="+record);
 			if(record.isEmpty())//没有商品列表信息
 			{
 				this.renderJson("goodsInfo","");
@@ -127,10 +123,10 @@ public class PersonalIndexController extends Controller{
 				Record record2=new Record();
 				record2.set("goods_id", Integer.parseInt(id));
 				record2.set("buyer_id",buyerId);
-				record2.set("buy_time", IPersonalStoreBaseController.getCurrentDate());
+				record2.set("buy_time", UserBaseController.getCurrentDate());
 				Db.save("orders", record2);					
 			}
-			this.redirect("/personal/index");
+			this.redirect("/user/index");
 		}catch(Exception ex){
 			this.renderError(-1, "购买失败");
 		}
@@ -151,9 +147,9 @@ public class PersonalIndexController extends Controller{
 			record.set("condition", this.getPara("condition"));
 			record.set("number",this.getPara("number"));
 			record.set("introduce",this.getPara("introduce"));
-			record.set("time", IPersonalStoreBaseController.getCurrentDate());			
+			record.set("time", UserBaseController.getCurrentDate());			
 			Db.update("goods", record);
-			this.redirect("/personal/index");
+			this.redirect("/user/index");
 		}catch(Exception ex){//更新失败
 			this.renderError(-1, "更新物品信息失败");
 		};
@@ -190,7 +186,7 @@ public class PersonalIndexController extends Controller{
 		try {
 			String sql=String.format("delete from goods where id=?");
 			Db.update(sql,Integer.parseInt(id));
-			this.redirect("/personal/index");
+			this.redirect("/user/index");
 		} catch (Exception ex) {
 			// TODO Auto-generated catch block
 			this.renderError(-1, "删除物品信息失败");
@@ -213,9 +209,9 @@ public class PersonalIndexController extends Controller{
 			record.set("number",this.getPara("number"));
 			record.set("introduce",this.getPara("introduce"));
 			record.set("stu_id", userId);			
-			record.set("time", IPersonalStoreBaseController.getCurrentDate());
+			record.set("time", UserBaseController.getCurrentDate());
 			Db.save("goods", record);
-			this.redirect("/personal/index");
+			this.redirect("/user/index");
 		}catch(Exception ex){//保存失败;
 			this.renderError(-1, "保存新物品信息失败");
 		};
@@ -227,7 +223,7 @@ public class PersonalIndexController extends Controller{
 	/**
 	 * 订单--获取订单列表信息
 	 */	
-	@ActionKey(value ="/get/personal/order")
+	@ActionKey(value ="/get/user/order")
 	public void getPersonalOrder() {
 		String userId = this.getSessionAttr("userId");//当前用户id
 		String sql = String.format(" SELECT orders.id as id,goods.id as goods_id,goods.name as name,goods.img as img,goods.price as price,orders.status as status,orders.receiving_time as receiving_time,orders.buy_time as buy_time FROM orders,goods WHERE orders.buyer_id= ? and orders.goods_id=goods.id");
@@ -256,7 +252,7 @@ public class PersonalIndexController extends Controller{
 		
 		try{
 			Db.update(sql,userId,goodsId);
-			this.redirect("/personal/index");
+			this.redirect("/user/index");
 		}catch(Exception ex){
 			this.renderError(-1, "删除订单失败");
 		}
@@ -273,9 +269,9 @@ public class PersonalIndexController extends Controller{
 		try{
 			Record record=Db.findFirst(sql,orderId);
 			record.set("status", "已收货");
-			record.set("receiving_time", IPersonalStoreBaseController.getCurrentDate());
+			record.set("receiving_time", UserBaseController.getCurrentDate());
 			Db.update("orders",record);
-			this.redirect("/personal/index");
+			this.redirect("/user/index");
 		}catch(Exception ex){
 			this.renderError(-1, "删除订单失败");
 		}

@@ -20,7 +20,7 @@
 		<div class="header-class">
 		   <span>川师跳蚤市场</span>
 		</div>
-		<el-form :model="loginForm"	action="/login/verification" :rules="loginRules" ref="loginForm" :label-position="labelPosition"	method="POST" label-width="100px"> 
+		<el-form :model="loginForm"	action="/userlogin/verification" :rules="loginRules" ref="loginForm" :label-position="labelPosition"	method="POST" label-width="100px"> 
 			<el-form-item label="学号" prop="userId" class="gap"> 
 				<el-input name="userId" v-model="loginForm.userId"></el-input>
 			</el-form-item> 

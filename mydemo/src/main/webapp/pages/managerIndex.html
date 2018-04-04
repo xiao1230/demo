@@ -85,7 +85,7 @@
             	<div  style="margin-top: 30px" >
             		<span ><strong>删除包含以下字段的账号</strong></span>
 					<el-input placeholder="请输入合适字段" v-model="id" ></el-input>
-					<el-button type="primary" class="buttonStyle gap" @click="deleteUser(id)">删除</el-button>
+					<el-button type="primary" class="buttonStyle" @click="deleteUser(id)">删除</el-button>
 				</div>
 				
 				<!-- 删除账号信息反馈 -->
@@ -119,7 +119,7 @@
 				 <!-- 有更多权限 -->
 				 <div>
 				 	<div v-show="moreVisiable">
-						<el-input type="text" placeholder="请输入账号" v-model="id"></el-input>
+						<el-input type="text" placeholder="请输入管理员账号" v-model="id"></el-input>
 						<el-button type="primary" class="buttonStyle gap" @click="searchManager(id)">编辑</el-button>
 					</div>			 		
 				 </div>	

@@ -124,6 +124,7 @@ public class UserIndexController extends Controller{
 				record2.set("goods_id", Integer.parseInt(id));
 				record2.set("buyer_id",buyerId);
 				record2.set("buy_time", UserBaseController.getCurrentDate());
+				record2.set("number", Integer.parseInt(number));
 				Db.save("orders", record2);					
 			}
 			this.redirect("/user/index");
@@ -246,15 +247,45 @@ public class UserIndexController extends Controller{
 	@Before(Tx.class)
 	@ActionKey(value ="/delete/order")
 	public void deleteOrder() {
-		String userId = this.getSessionAttr("userId");//当前用户id
-		String goodsId = this.getPara("goods_id");
-		String sql = String.format("delete from orders where buyer_id=? and goods_id=? and status='已收货'");
+		//String userId = this.getSessionAttr("userId");//当前用户id
+		String orderId = this.getPara("order_id");
+		String sql = String.format("delete from orders where id=?");
 		
 		try{
-			Db.update(sql,userId,goodsId);
+			Db.update(sql,orderId);
 			this.redirect("/user/index");
 		}catch(Exception ex){
 			this.renderError(-1, "删除订单失败");
+		}
+	}
+	
+	/**
+	 * 订单--取消订单
+	 */
+	@Before(Tx.class)
+	@ActionKey(value ="/cancel/order")
+	public void cancelOrder() {
+		//String userId = this.getSessionAttr("userId");//当前用户id
+		String orderId = this.getPara("order_id");
+		String goodsId = this.getPara("goods_id");
+		
+		String sql1 = String.format("delete from orders where id=?");
+		
+		String sql2 = String.format("select * from goods where id=?");
+		String sql3 = String.format("select * from orders where id=?");
+		try{
+			Record record=Db.findFirst(sql3,orderId);
+			record.getInt("number");
+			//在商品表中修改数量
+			Record record1=Db.findFirst(sql2,goodsId);
+			record1.set("number",record1.getInt("number")+record.getInt("number"));
+			record1.set("id",record1.get("id"));
+			Db.update("goods",record1);
+			//在订单表中删除订单
+			Db.update(sql1,orderId);
+			this.redirect("/user/index");
+		}catch(Exception ex){
+			this.renderError(-1, "取消订单失败");
 		}
 	}
 	
@@ -273,7 +304,7 @@ public class UserIndexController extends Controller{
 			Db.update("orders",record);
 			this.redirect("/user/index");
 		}catch(Exception ex){
-			this.renderError(-1, "删除订单失败");
+			this.renderError(-1, "确认收货失败");
 		}
 	}	
 	

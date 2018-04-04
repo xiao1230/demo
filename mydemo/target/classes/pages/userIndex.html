@@ -173,10 +173,10 @@
 								<el-input name="qq" v-model="userForm.qq" placeholder="请输入qq号"></el-input>
 							</el-form-item>
 						    <el-form-item label="新密码" prop="password" class="gap"> 
-								<el-input name="password" type="password" v-model="userForm.password" placeholder="请输入新密码"></el-input>
+								<el-input name="password"  v-model="userForm.password" placeholder="请输入新密码"></el-input>
 							</el-form-item>
 							<el-form-item label="确认密码" prop="confirmPwd" class="gap"> 
-								<el-input name="confirmPwd" type="password" v-model="userForm.confirmPwd" placeholder="请再次确认密码"></el-input>
+								<el-input name="confirmPwd"  v-model="userForm.confirmPwd" placeholder="请再次确认密码"></el-input>
 							</el-form-item>
 							<el-button type="primary" class="editbuttonStyle gap" @click="cancelBtn">取消</el-button>
 							<el-button type="primary" class="editbuttonStyle gap" @click="editUserSaveBtn">保存</el-button>
@@ -269,7 +269,6 @@
 					    </div>
 						<div slot="footer" class="dialog-footer">
 						   <el-button @click="editGoodsVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">取 消</el-button>
-						   <el-button type="primary" @click="editGoodsVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">确 定</el-button>
 						</div>	      
 					  </el-dialog>
 					  <div class="v-modal" v-show="editGoodsVisiable" style="z-index: 1999;"></div> 
@@ -371,7 +370,7 @@
 	                   	   		<el-col :span="20"><span>{{orderRow.name}}</span></el-col>
 	                   	    </el-row>
 	                   	    <el-row class="gap">
-	                       		<el-col :span="4"><span>价格:</span></el-col>
+	                       		<el-col :span="4"><span>单价:</span></el-col>
 	                   	   		<el-col :span="20"><span>{{orderRow.price}}</span></el-col>
 	                   	    </el-row>
 	                   	    <el-row class="gap">
@@ -389,8 +388,10 @@
 						</div>
 						<div slot="footer" class="dialog-footer">
 						   <el-button type="primary" @click="orderDeatilVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">返回</el-button>
-						   <el-button @click="deleteOrder(orderRow.status)"  type="primary" V-show="deleteOrderButtonVisiable" style="height:50px;font-size:24px;font-family:'微软雅黑';">删除</el-button>				           
-					       <el-button @click="confirmOrder(orderRow.status)"  type="primary" V-show="confirmOrderButtonVisiable" style="height:50px;font-size:24px;font-family:'微软雅黑';">确认收货</el-button>				           				           
+						   <el-button @click="deleteOrder(orderRow.id)"  type="primary" V-show="deleteOrderButtonVisiable" style="height:50px;font-size:24px;font-family:'微软雅黑';">删除</el-button>				           
+					       <el-button @click="confirmOrder(orderRow.id)"  type="primary" V-show="confirmOrderButtonVisiable" style="height:50px;font-size:24px;font-family:'微软雅黑';">确认收货</el-button>				           				           
+						<el-button @click="cancelOrder(orderRow.id,orderRow.goods_id)"  type="primary" V-show="cancelOrderButtonVisiable" style="height:50px;font-size:24px;font-family:'微软雅黑';">取消订单</el-button>				           				           
+							
 						</div>	      
 					  </el-dialog>
 					  <div class="v-modal" v-show="orderDeatilVisiable" style="z-index: 1999;"></div> 
@@ -422,7 +423,7 @@
 						</div>
 						<div slot="footer" class="dialog-footer">
 						   <el-button type="primary" @click="deleteOrderVisiable=false" style="height:50px;font-size:24px;font-family:'微软雅黑';">取消</el-button>
-						   <el-button type="primary" @click="deleteOrderVisiable=confirmDeleteOrder(orderRow.goods_id)" style="height:50px;font-size:24px;font-family:'微软雅黑';">确认删除</el-button>
+						   <el-button type="primary" @click="deleteOrderVisiable=confirmDeleteOrder(orderRow.id)" style="height:50px;font-size:24px;font-family:'微软雅黑';">确认删除</el-button>
 						</div>	      
 					  </el-dialog>
 					  <div class="v-modal" v-show="deleteOrderVisiable" style="z-index: 1999;"></div> 
@@ -448,14 +449,7 @@
 var userIndexModel = {};
 userIndexModel.data = function(){
 	//个人中心-基本信息tab页
-	//验证两次输入的密码是否一致
-	var VerifyPwd = function(rule,value,callback){
-		if(!personalIndexCls.checkPwd(value)){//验证不成功
-			callback(new Error('两次输入的密码不一致'));
-		}else{
-			callback();
-		}
-	};
+
 	var telRule = [//手机号规则
    		{ min: 11, max: 11, message: '请输入11位手机号码', trigger: 'blur' }
    	];
@@ -468,6 +462,14 @@ userIndexModel.data = function(){
 	var confirmPwdRule = [//确认密码规则
    		{ validator: VerifyPwd, trigger: 'blur'},
    	];
+	//验证两次输入的密码是否一致
+	var VerifyPwd = function(rule,value,callback){
+		if(!userIndexCls.checkPwd(value)){//验证不成功
+			callback(new Error('两次输入的密码不一致'));
+		}else{
+			callback();
+		}
+	};
 	//获取首页商品信息
 	var goodsResponse = ajax("/get/allgoods/info",null,null,null,{async:false,type:'GET'});   //获取个人资料信息
 	var goodsInfo = goodsResponse.goodsInfo;
@@ -540,8 +542,9 @@ userIndexModel.data = function(){
 		orderRow:'',
 
 		orderDeatilVisiable:false,//默认不显示订单详情窗口	
-		deleteOrderButtonVisiable:false,
-		confirmOrderButtonVisiable:false,
+		deleteOrderButtonVisiable:false,//默认不显示删除订单按钮
+		confirmOrderButtonVisiable:false,//默认不显示确认收货按钮
+		cancelOrderButtonVisiable:false,//默认不显示取消订单按钮
 		deleteOrderVisiable:false,//默认不显示确认删除订单窗口
 		receivingVisiable:true,//默认显示收货时间
 		
@@ -661,7 +664,7 @@ userIndexModel.methods = {
 		if(value == $this.userForm.password){//验证成功
 			return true;
 		}else{//验证不成功
-			return false;
+			alert("value3="+value);
 		}
 	},
 	
@@ -689,7 +692,7 @@ userIndexModel.methods = {
 	},
 	confirmDeleteGoods:function(id){//确认删除“我的商品”信息
 		ajax("/delete/goods",{id:id},null,null,{async:false,type:'POST'});   //删除物品
-		
+		this.deleteGoodsVisiable=false;
 	},
 	addGoods:function(){//新增“我的商品”信息
 		this.addGoodsVisiable=true;
@@ -710,27 +713,35 @@ userIndexModel.methods = {
 		{	
 			this.receivingVisiable=false;
 			this.deleteOrderButtonVisiable=false;
+			this.cancelOrderButtonVisiable=true;
 			this.confirmOrderButtonVisiable=true;
 		}
 		else if(row.status=="已收货")
 		{
 			this.receivingVisiable=true;
 			this.deleteOrderButtonVisiable=true;
+			this.cancelOrderButtonVisiable=false;
 			this.confirmOrderButtonVisiable=false;
 		}
 		this.orderDeatilVisiable = true;
 	},
-	deleteOrder:function(index,row) {//删除订单
-		userIndexCls.orderRow = row;
+	deleteOrder:function(id) {//删除订单
 		this.deleteOrderVisiable =true;
 	},
-	confirmOrder:function(index,row) {//确认收货
-		userIndexCls.orderRow = row;
+	
+	cancelOrder:function(id,goods_id){
+		ajax("/cancel/order",{order_id:id,goods_id:goods_id},null,null,{async:false,type:'POST'});
+		this.orderDeatilVisiable=false;
+	},
+	confirmOrder:function(id) {//确认收货
 		//修改状态	
-		ajax("/confirm/order",{order_id:row.id},null,null,{async:false,type:'POST'}); 		  
+		ajax("/confirm/order",{order_id:id},null,null,{async:false,type:'POST'}); 		  
+		this.orderDeatilVisiable=false;
 	},	
-	confirmDeleteOrder:function(goods_id) {//确认删除订单
-		ajax("/delete/order",{goods_id:goods_id},null,null,{async:false,type:'POST'});	
+	confirmDeleteOrder:function(id) {//确认删除订单
+		ajax("/delete/order",{order_id:id},null,null,{async:false,type:'POST'});	
+		this.deleteOrderVisiable =false;
+		this.orderDeatilVisiable=false;
 	},
 		
 };
